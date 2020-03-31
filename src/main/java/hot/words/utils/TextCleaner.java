@@ -14,21 +14,8 @@ import java.util.*;
 public class TextCleaner {
     public static List<String> stopWords = loadStopWords();
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(HanlpUtil.loadExampleData().get(0));
-        System.out.println("doc:");
-        String doc = HanlpUtil.loadExampleData().get(0);
-
-        List<Term> list = NLPTokenizer.segment(doc);
-        System.out.println(list);
-
-        System.out.println(delStopWords(list));
-    }
-
-
-
-    private static List<String> loadStopWords()  {
-       File file = new File(Config.getValue("stopwords"));
+    private static List<String> loadStopWords() {
+        File file = new File(Config.getValue("stopwords"));
         String[] words = new String[0];
         try {
             words = FileUtil.loadData(file).split("\n");
@@ -36,7 +23,6 @@ public class TextCleaner {
             e.printStackTrace();
         }
         return Arrays.asList(words);
-
     }
 
 
@@ -45,13 +31,12 @@ public class TextCleaner {
         String doc1 = doc.replaceAll("[- +:\\/_,$%^*()+\\\"\\'<>]+|[+——~@#￥%&*【】{}《》“”‘’]+", "");
         String doc2 = doc1.replaceAll("\t", "").replaceAll("\n", "");
         return doc1;
-
     }
 
     // 去除停用词
     public static String delStopWords(List<Term> termList) {
         List<String> words = new LinkedList<String>();
-        for(Term term:termList){
+        for (Term term : termList) {
             //
             if (term.word.length() > 1)
                 words.add(term.word);
