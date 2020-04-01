@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by dell on 2020/3/26.
+ * Created by daijitao on 2020/3/26.
  */
 public class HotWordsApp {
     public static void main(String[] args) {

@@ -24,15 +24,15 @@ import java.util.Properties;
 public class KafkaUtil {
     private final static Logger logger = LoggerFactory.getLogger(KafkaUtil.class);
 
-    String bootstrap_servers = Config.getValue("hotwords.bootstrap.servers");
-    String group_id = Config.getValue("hotwords.group.id");
-    String enable_auto_commit = Config.getValue("hotwords.enable.auto.commit");
-    String auto_commit_interval_ms = Config.getValue("hotwords.auto.commit.interval.ms");
-    int max_poll_records = Integer.parseInt(Config.getValue("hotwords.max.poll.records"));
-    String session_timeout_ms = Config.getValue("hotwords.session.timeout.ms");
-    String key_deserializer = Config.getValue("key.deserializer");
-    String value_deserializer = Config.getValue("value.deserializer");
-    String offset_reset = Config.getValue("hotwords.auto.offset.reset");
+    private String bootstrap_servers = Config.getValue("hotwords.bootstrap.servers");
+    private String group_id = Config.getValue("hotwords.group.id");
+    private String enable_auto_commit = Config.getValue("hotwords.enable.auto.commit");
+    private String auto_commit_interval_ms = Config.getValue("hotwords.auto.commit.interval.ms");
+    private int max_poll_records = Integer.parseInt(Config.getValue("hotwords.max.poll.records"));
+    private String session_timeout_ms = Config.getValue("hotwords.session.timeout.ms");
+    private String key_deserializer = Config.getValue("key.deserializer");
+    private String value_deserializer = Config.getValue("value.deserializer");
+    private String offset_reset = Config.getValue("hotwords.auto.offset.reset");
 
 
 
@@ -40,7 +40,7 @@ public class KafkaUtil {
     /***
      * @return
      */
-    public KafkaConsumer<String, String> genConsumer() {
+    private KafkaConsumer<String, String> genConsumer() {
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrap_servers);
         props.put("group.id", group_id);
@@ -62,7 +62,7 @@ public class KafkaUtil {
      * @Author: Mr.Young
      * @Date: 2019-1-17
      */
-    public KafkaProducer<String, String> genProducer() {
+    private KafkaProducer<String, String> genProducer() {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", bootstrap_servers);
         properties.put("acks", "all");
@@ -81,7 +81,7 @@ public class KafkaUtil {
         return new KafkaProducer<String, String>(properties);
     }
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         String topic = Config.getValue("hotwords.topic.name");
         String key = "name";
         String value = "daijitao123";
@@ -153,7 +153,12 @@ public class KafkaUtil {
         }
     }
 
-
+    /**
+     *
+     * @param topicName
+     * @param taskID:key
+     * @return kafka value
+     */
     public String getValueByTaskId(String topicName, String taskID) {
         KafkaConsumer<String, String> consumer = genConsumer();
         // 指定主题
