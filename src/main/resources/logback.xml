@@ -9,7 +9,7 @@
 <configuration debug="false" scan="true" scanPeriod="5 minutes">
 
     <!--<property name="LOG_HOME" value="/data/appRun/log/show  D:/testdata/logback"/>-->
-    <property name="LOG_HOME" value="E:/testdata/logback"/> <!-- E:/testdata/logback -->
+    <property name="LOG_HOME" value="E:/testdata/logback/hotwords"/> <!-- E:/testdata/logback -->
     <property name="APP_Name" value="hotwords"/>
     <!-- 每个logger都关联到logger上下文，默认上下文名称为“default”。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改。-->
     <contextName>${APP_Name}</contextName>
@@ -38,19 +38,11 @@
     </appender>
 
     <!-- 4. 最终的策略 -->
-    <!-- 4.1 开发环境:打印控制台-->
-    <springProfile name="dev">
-        <logger name="com.supermap.controller" level="debug"/><!-- 修改此处扫描包名 -->
-    </springProfile>
 
-    <root level="info">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="DEBUG_FILE" />
-        <appender-ref ref="INFO_FILE" />
-        <appender-ref ref="WARN_FILE" />
-        <appender-ref ref="ERROR_FILE" />
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
-
 
     <!--<root level="INFO">-->
         <!--<appender-ref ref="STDOUT"/>-->
