@@ -47,10 +47,11 @@ public class FileUtil {
     /**
      * 按照行读取文件
      *
-     * @param file
+     * @param strFile
      * @return
      */
-    public static String loadData(File file) throws Exception {
+    public static String loadData(String strFile) throws Exception {
+        File file = new File(strFile);
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
@@ -100,6 +101,41 @@ public class FileUtil {
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), Charset.forName("UTF-8")));
+            writer.write(content);
+        } catch (IOException e) {
+            throw new Exception(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    throw new Exception(e);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param fileName
+     * @param content
+     * @param append ture 追加方式写入
+     * @throws Exception
+     */
+    public static void save2Txt(String fileName, String content, boolean append) throws Exception {
+        //1 创建文件
+        File file = new File(fileName);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new Exception(e);
+            }
+        }
+        //2 write
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), Charset.forName("UTF-8")));
             writer.write(content);
         } catch (IOException e) {
             throw new Exception(e);

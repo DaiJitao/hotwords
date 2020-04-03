@@ -15,7 +15,7 @@ public class TextCleaner {
     public static List<String> stopWords = loadStopWords();
 
     private static List<String> loadStopWords() {
-        File file = new File(Config.getValue("stopwords"));
+        String file = Config.getValue("stopwords");
         String[] words = new String[0];
         try {
             words = FileUtil.loadData(file).split("\n");

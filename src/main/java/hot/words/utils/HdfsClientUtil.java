@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 
 /**
  * hadoop文件系统操作
@@ -121,9 +120,10 @@ public class HdfsClientUtil {
 
     public static void main(String[] args) throws IOException {
         HdfsClientUtil util = HdfsClientUtil.getInstance();
-        Path path = new Path(Config.getValue("taskDir"));
-        System.out.println(fs.exists(path));
-        fs.close();
+        util.listDirectoryFromHdfs("/hotwordNer/taskDir");
+        String srcFile = "/hotwordNer/taskDir/" + "hotwordner_test1_f7ea8b_20200306175137_20200306175137.txt";
+        String dstDir = "F:\\data";
+        util.downloadFile(srcFile, dstDir);
     }
 
 
@@ -153,8 +153,6 @@ public class HdfsClientUtil {
 
     //读取文件的内容
     public void readFile(String filePath) throws IOException {
-        //Configuration conf = new Configuration();
-//        FileSystem fs = FileSystem.get(conf);
         Path srcPath = new Path(filePath);
         InputStream in = null;
         try {
@@ -171,18 +169,15 @@ public class HdfsClientUtil {
      */
     public void listDirectoryFromHdfs(String direPath) {
         try {
-            FileSystem fs = FileSystem.get(URI.create(direPath), conf);
             FileStatus[] filelist = fs.listStatus(new Path(direPath));
             for (int i = 0; i < filelist.length; i++) {
-                logger.info(direPath + "目录下所有文件______________");
-                FileStatus fileStatus = filelist[i];
-                logger.info("Name:" + fileStatus.getPath().getName());
-                logger.info("Size:" + fileStatus.getLen());
-                logger.info("Path:" + fileStatus.getPath());
-            }
-            fs.close();
-        } catch (Exception e) {
 
+                FileStatus fileStatus = filelist[i];
+                System.out.println(fileStatus.getPath().getName());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -194,12 +189,12 @@ public class HdfsClientUtil {
      * @Date: 2018-11-21
      */
     public boolean downloadFile(String src, String dst) {
-        Path srcPath = new Path(src);
+        Path file = new Path(src);
         Path dstPath = new Path(dst);
         boolean bResult = false;
-        logger.info("待下载文件:" + srcPath + ",下载后文件：" + dstPath);
+        System.out.println("下载文件：" + file);
         try {
-            fs.copyToLocalFile(srcPath, dstPath);
+            fs.copyToLocalFile(file, dstPath);
             bResult = true;
         } catch (IOException ioe) {
             logger.error("文件下载失败！" + ioe.getStackTrace());
@@ -209,22 +204,23 @@ public class HdfsClientUtil {
 
     /**
      * @Description: 上传文件到HDFS目录
-     * @Param: [localFile 本地文件路径 /home/file.txt, fileName 本地文件名 file.txt]
+     * @Param: [localFile 本地文件 /home/file.txt, fileName 本地文件名 file.txt]
      * @return: boolean 成功返回true, 失败返回false
      * @Author: Mr.Young
      * @Date: 2018-10-22
      */
-    public boolean uploadToMonitor(String localPath, String fileName) throws Exception {
+    public boolean uploadToMonitor(String localFile, String fileName)  {
         String dfsTempDir = Config.getValue("tempDir") + fileName;
         String dfsTaskDir = Config.getValue("taskDir") + fileName;
-
+        boolean isOK = false;
         try {
             // 将文件上传到dfsTempDir临时目录下
-            uploadFile(localPath, dfsTempDir);
-            logger.info("{}文件上传到dfs临时目录{}成功", localPath, dfsTempDir);
+            uploadFile(localFile, dfsTempDir);
+            logger.info("{}文件上传到dfs临时目录{}成功", localFile, dfsTempDir);
+            System.out.println(localFile + "文件上传到dfs目录成功" + dfsTempDir);
         } catch (IOException e) {
-            logger.error("{}文件上传到dfs临时目录{}失败，exception:{}", localPath, dfsTempDir, e.toString());
-            throw new Exception("文件上传到DFS临时目录失败");
+            logger.error("{}文件上传到dfs临时目录{}失败，exception:{}", localFile, dfsTempDir, e.toString());
+            e.printStackTrace();
         }
 
         try {
@@ -232,13 +228,17 @@ public class HdfsClientUtil {
             boolean bResunt = rename(dfsTempDir, dfsTaskDir);
             if (bResunt) {
                 logger.info("{}文件移动到dfsTask目录{}成功", dfsTempDir, dfsTaskDir);
+                System.out.println(dfsTempDir + " 文件移动到dfsTask目录成功" + dfsTaskDir);
+                isOK = true;
             } else {
                 logger.error("{}文件移动到dfsTask目录{}失败", dfsTempDir, dfsTaskDir);
+                System.out.println(dfsTempDir + " 文件移动到dfsTask目录成功" + dfsTaskDir);
             }
-            return bResunt;
         } catch (Exception e) {
             logger.error("{}文件移动到dfsTask目录{}失败", dfsTempDir, dfsTaskDir);
-            throw new Exception(e);
+            System.out.println(dfsTempDir + "文件移动到dfsTask目录失败" + dfsTaskDir);
+            e.printStackTrace();
         }
+        return isOK;
     }
 }

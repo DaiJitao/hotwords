@@ -7,7 +7,6 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.protocol.types.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +34,6 @@ public class KafkaUtil {
     private String offset_reset = Config.getValue("hotwords.auto.offset.reset");
 
 
-
-
     /***
      * @return
      */
@@ -45,8 +42,8 @@ public class KafkaUtil {
         props.put("bootstrap.servers", bootstrap_servers);
         props.put("group.id", group_id);
         props.put("enable.auto.commit", enable_auto_commit);
-        props.put("auto.commit.interval.ms",auto_commit_interval_ms);
-        props.put("max.poll.records",max_poll_records);// 每次调用poll返回的消息数
+        props.put("auto.commit.interval.ms", auto_commit_interval_ms);
+        props.put("max.poll.records", max_poll_records);// 每次调用poll返回的消息数
         props.put("session.timeout.ms", session_timeout_ms);
         props.put("auto.offset.reset", offset_reset);
         props.put("key.deserializer", key_deserializer);
@@ -81,16 +78,6 @@ public class KafkaUtil {
         return new KafkaProducer<String, String>(properties);
     }
 
-    public static void main1(String[] args) {
-        String topic = Config.getValue("hotwords.topic.name");
-        String key = "name";
-        String value = "daijitao123";
-        KafkaUtil kafkaUtil = new KafkaUtil();
-        kafkaUtil.send(topic, key,value);
-        System.out.println(kafkaUtil.getValueByTaskId(topic, key));
-
-    }
-
     public void send(String topicName, String key, String value) {
         KafkaProducer<String, String> producer = genProducer();
         try {
@@ -102,7 +89,7 @@ public class KafkaUtil {
                     if (e != null) {
                         new Exception(e);
                     } else {
-                        logger.info("kafka消息发送成功！{}",recordMetadata);
+                        logger.info("kafka消息发送成功！{}", recordMetadata);
                         System.out.println("kafka消息发送成功！" + value + " " + recordMetadata);
                     }
                 }
@@ -154,7 +141,6 @@ public class KafkaUtil {
     }
 
     /**
-     *
      * @param topicName
      * @param taskID:key
      * @return kafka value
@@ -179,9 +165,45 @@ public class KafkaUtil {
                 {
                     System.out.println(record.key());
                     if (taskID.equals(record.key())) {
-                        logger.info("热词服务=========>>>取到kafka数据：{}",record.value());
+                        logger.info("热词服务=========>>>取到kafka数据：{}", record.value());
                         System.out.println(record.value());
                         return record.value();
+                    }
+                }
+                // logger.info("位移提交");
+                // consumer.commitSync();
+            }
+        } finally {
+            consumer.close(); //4
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        KafkaUtil kafkaUtil = new KafkaUtil();
+        kafkaUtil.listAll("HotwordTopic");
+    }
+
+    public String listAll(String topicName) throws Exception {
+        KafkaConsumer<String, String> consumer = genConsumer();
+        // 指定主题
+        consumer.subscribe(Collections.singletonList(topicName));
+        logger.info("topicName={}，", topicName);
+        System.out.println("正在取回kafka数据...");
+        int count = 100000000;
+        try {
+            while (true) {  //1)
+                if ((count--) <= 0) {
+                    logger.info("热词服务=========>>>取不到kafka数据");
+                    return null;
+                }
+                ConsumerRecords<String, String> records = consumer.poll(60000);  //2)
+                logger.info("recods size: ", records.count());
+                System.out.println("recods size: " + records.count());
+                for (ConsumerRecord<String, String> record : records)  //3)
+                {
+                    System.out.println("key=" + record.key() + " value=" + record.value());
+                    if (record.key().contains("endtime")) {
+                        FileUtil.save2Txt("F:/data/kafka_result.txt", record.key() + ":" + record.value()+"\n",true);
                     }
                 }
                 // logger.info("位移提交");
