@@ -11,25 +11,35 @@ import java.util.List;
  * Created by dell on 2020/4/3.
  */
 public class PerformanceTest {
-    public static void main(String[] args) throws Exception {
-        for (int i = 0; i < 50; i++) {
-            genFile(1000);
-        }
-        Thread.sleep(2);
 
+
+    public static void main(String[] args) throws Exception {
         String dstPath = "F:\\data\\hotwordner\\";
+        File[] rmfiles = FileUtil.listFilesByDir(dstPath);
+        for (File file : rmfiles) {
+            FileUtil.deleteFile(file);
+        }
+
+
+        int pSize = 10; // 并发量，线程数
+        int dataSize = 1000;
+        for (int i = 0; i < pSize; i++) {
+            genFile(dataSize);
+        }
+        Thread.sleep(1);
+
         File[] files = FileUtil.listFilesByDir(dstPath);
         List<Thread> taskList = new ArrayList<>(files.length);
-        for(File file:files){
+        for (File file : files) {
             int s = file.toString().lastIndexOf("\\");
             int e = file.toString().indexOf(".");
-            String taskId = file.toString().substring(s+1,e);
+            String taskId = file.toString().substring(s + 1, e);
 
             Runnable task = new SendTask(file.toString(), taskId);
             Thread thread = new Thread(task);
             taskList.add(thread);
         }
-        for(Thread task:taskList){
+        for (Thread task : taskList) {
             task.start();
         }
     }
@@ -53,13 +63,14 @@ public class PerformanceTest {
             String assetId = UUIDGenerator.getUUID() + i;
             jsonObject.put("assetId", assetId);
             jsonObject.put("taskId", taskId);
-            jsonObject.put("taskType","2");
+            jsonObject.put("taskType", "2");
             list.add(jsonObject.toJSONString());
         }
         FileUtil.save2Txt(file, String.join("\n", list));
     }
 
 }
+
 class SendTask implements Runnable {
     HdfsClientUtil clientUtil = HdfsClientUtil.getInstance();
 

@@ -1,26 +1,26 @@
 package hot.words.utils;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.*;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by dell on 2019/7/22.
  */
 public class FileUtil {
+
+    /**
+     * @param sPath 文件
+     * @return
+     */
+    public static boolean deleteFile(File file) {
+        boolean flag = false;
+        // 路径为文件且不为空则进行删除
+        if (file.isFile() && file.exists()) {
+            file.delete();
+            flag = true;
+        }
+        return flag;
+    }
 
     public static boolean mkdir(String dir) {
         boolean isCreated = false;
@@ -116,10 +116,9 @@ public class FileUtil {
     }
 
     /**
-     *
      * @param fileName
      * @param content
-     * @param append ture 追加方式写入
+     * @param append   ture 追加方式写入
      * @throws Exception
      */
     public static void save2Txt(String fileName, String content, boolean append) throws Exception {
