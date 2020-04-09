@@ -1,24 +1,48 @@
 package hot.words.service;
 
-import breeze.linalg.Axis;
 import com.hankcs.hanlp.seg.common.Term;
-import com.sun.imageio.plugins.common.I18N;
 import hot.words.utils.HanlpUtil;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.*;
+import org.apache.spark.api.java.function.DoubleFunction;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.storage.StorageLevel;
-import scala.Int;
 import scala.Tuple2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class Demo extends KeyWordsExtractor {
+    public static void main(String[] args) {
+        checkPointOP();
+    }
 
+
+    static void checkPointOP() {
+        SparkConf conf = new SparkConf();
+        conf.setMaster("local[4]").setAppName("checkPointOP");
+        JavaSparkContext jsc = new JavaSparkContext(conf);
+        jsc.setCheckpointDir("./checkpoint");
+
+        List<String> list = Arrays.asList("w1 1", "w2 2", "w3 3", "w4 4");
+        JavaRDD<String> javaRDD = jsc.parallelize(list);
+        javaRDD.first();
+        System.out.println(javaRDD.getNumPartitions());
+        javaRDD.checkpoint();
+        System.out.println();
+
+        jsc.close();
+
+
+    }
 
     public static void main3(String[] args) {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("flatmap");
@@ -40,9 +64,9 @@ public class Demo extends KeyWordsExtractor {
                 String[] s1 = tuple2._1.split(" ");
                 String[] s2 = tuple2._2.split(" ");
 
-                List<Tuple2<String,String>> list1 = new ArrayList<>();
+                List<Tuple2<String, String>> list1 = new ArrayList<>();
                 for (int i = 0; i < s1.length; i++) {
-                    list1.add(new Tuple2<>(s1[i],s2[i]));
+                    list1.add(new Tuple2<>(s1[i], s2[i]));
 
                 }
                 return list1.iterator();

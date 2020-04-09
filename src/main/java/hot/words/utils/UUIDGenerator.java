@@ -11,6 +11,11 @@ import java.util.UUID;
  */
 public class UUIDGenerator {
 
+	public static void main(String[] args) {
+		String uu = UUIDGenerator.getUUID();
+		System.out.println(uu.length());
+	}
+
 	public UUIDGenerator(){}
 	
 	/**
