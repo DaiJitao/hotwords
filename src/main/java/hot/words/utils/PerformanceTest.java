@@ -50,7 +50,6 @@ public class PerformanceTest {
      */
     private static void genFile(int size) throws Exception {
         String path = "F:\\data\\hotwordner_test2_f7ea8b_20200306175137_20200306175137.txt";
-        String newName = "hotwordner_test2_123456_20200306175137_20200306175137";
 
 
         String dstPath = "F:\\data\\hotwordner\\";
