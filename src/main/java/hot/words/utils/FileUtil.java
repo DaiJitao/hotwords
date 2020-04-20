@@ -1,12 +1,55 @@
 package hot.words.utils;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dell on 2019/7/22.
  */
 public class FileUtil {
+
+
+    public static List<String> loadDataFromJSON(String filePath) throws Exception {
+        File file = new File(filePath);
+        FileInputStream fileInputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        List<String> list = new ArrayList<>();
+        try {
+            fileInputStream = new FileInputStream(file);
+            inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                JSONObject jsonObject = JSONObject.parseObject(line);
+                String content = jsonObject.getString("content");
+                list.add(content);
+                line = bufferedReader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("没有找到" + file);
+        } catch (UnsupportedEncodingException e) {
+            throw new FileNotFoundException("不支持编码" + file);
+        } catch (Exception e) {
+            throw new Exception(e);
+        } finally {
+            try {
+                if (bufferedReader != null)
+                    bufferedReader.close();
+                if (null != inputStreamReader)
+                    inputStreamReader.close();
+                if (null != fileInputStream)
+                    fileInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
 
     /**
      * @param sPath 文件

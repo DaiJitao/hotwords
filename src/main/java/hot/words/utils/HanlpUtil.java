@@ -92,7 +92,7 @@ public class HanlpUtil {
      */
     public static List<List<Term>> nlpSegment(List<String> docs) {
 
-        List<List<Term>> result = new ArrayList<List<Term>>(10);
+        List<List<Term>> result = new ArrayList<List<Term>>(docs.size());
 
         for (String doc : docs) {
             List<Term> list = NLPTokenizer.segment(doc);

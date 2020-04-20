@@ -27,14 +27,14 @@ import java.util.*;
  */
 public class TfIDFKeyWords extends KeyWordsExtractor {
 
-    public Map<String, Float> getKeyWords(SparkSession spark, Broadcast<Integer> sizeBrodcast, JavaRDD<String> docsRDD, int size) {
+    public Map<String, Float> getKeyWords(SparkSession spark, Broadcast<Integer> sizeBrodcast, JavaRDD<String> docsRDD) {
         // 分词
         JavaRDD<String> cutWordsRDD = docsRDD.map(new Function<String, String>() {
             @Override
             public String call(String doc) throws Exception {
-                String docCleaned = TextCleaner.cleanSpecialCharactersText(doc);
-                //NLP分词,去除停用词
-                return TextCleaner.delStopWords(nlpTokenizer.segment(docCleaned));
+                // String docCleaned = TextCleaner.cleanSpecialCharactersText(doc);
+                //NLP分词,去除停用词; 目前感知机的效果相当不错，如果能在更大的语料库上训练就更好了
+                return TextCleaner.delStopWords(nlpTokenizer.segment(doc));
             }
         });
         // System.out.println("cutWordsRDD:\n" + cutWordsRDD.collect());

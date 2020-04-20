@@ -35,7 +35,7 @@ public class TextRankKeyWords extends KeyWordsExtractor {
 
         // 获取停用词词表
         List<String> stopwordsList = TextCleaner.stopWords;
-        Broadcast<List<String>> stopwordsBroadcast = sc.broadcast(stopwordsList);
+        Broadcast<List<String>> stopwordsBroadcast = sc.broadcast(stopwordsList); // 停用词词表作为广播变量
 
         JavaRDD<Term> termJavaRDD = sc.parallelize(termList);
         // 去除停用词
@@ -43,8 +43,8 @@ public class TextRankKeyWords extends KeyWordsExtractor {
             @Override
             public Boolean call(Term term) throws Exception {
                 List<String> stopWords = stopwordsBroadcast.getValue();
-                // 停用词表
-                if (stopWords.contains(term.word))
+                // 停用词表:含有停用词或者单词长度为1或者含有标点符号
+                if (stopWords.contains(term.word) || term.word.length() ==1 || TextCleaner.isMached(term.word))
                     return false;
                 return true;
             }
@@ -106,7 +106,7 @@ public class TextRankKeyWords extends KeyWordsExtractor {
     /**
      * 提取topN
      *
-     * @param size:        关键词个数；<0: 取回所有; >=0:提取指定值
+     * @param topN:        关键词个数；<0: 取回所有; >=0:提取指定值
      * @param tfIDFMap:    tfidf计算的权重
      * @param textRankMap: textRank计算的权重
      * @return
