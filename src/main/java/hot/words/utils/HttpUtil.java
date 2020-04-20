@@ -1,6 +1,5 @@
 package hot.words.utils;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
@@ -388,19 +387,22 @@ public class HttpUtil {
 //        jsonObject.put("content", jsonArray.subList(0,2));
 //        System.out.println(jsonObject.getJSONArray("content"));
 
+        int fileNum = 10; // 文件个数
         Long rs = 0L;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < fileNum; i++) {
+            Thread.sleep(3000);
             jsonObject.put("taskId", "hotwordner_test_" + UUIDGenerator.getUUID());
             params.put("taskData", jsonObject.toJSONString());
+
 
             Long start = System.currentTimeMillis();
             String doPost = doPost(hotWordsURL, params);
             Long end = System.currentTimeMillis();
             rs += (end - start);
-            System.out.println(i  + " " +doPost);
+            System.out.println(i + " " + doPost);
         }
         System.out.println(rs);
-        System.out.println(rs/100);
+        System.out.println(rs / fileNum);
 
         String doGet = doGet(testURL);
         System.out.println(doGet);
