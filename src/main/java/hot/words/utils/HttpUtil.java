@@ -1,5 +1,6 @@
 package hot.words.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import org.apache.commons.io.IOUtils;
@@ -52,6 +53,8 @@ public class HttpUtil {
     private final static Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 
     private final static String HTTPS = "https";
+
+    private final static String HTTP = "http";
 
     /**
      * Get 请求 不指定请求参数
@@ -370,16 +373,38 @@ public class HttpUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        // "http://localhost:8093/hotwordNer/test"
-        String hotWordsURL = "http://localhost:8093/hotwordNer/hotWords";
+        String testURL = "http://10.121.17.201:8093/hotwordNer/test";// "http://localhost:8093/hotwordNer/test";
+        String hotWordsURL = "http://10.121.17.201:8093/hotwordNer/hotWords"; // "http://localhost:8093/hotwordNer/hotWords";
         //File file = new File("C:\\Users\\dell\\Desktop\\praise\\data.txt");
         //String data = FileUtil.loadData(file);
         Map<String, String> params = new HashMap<>();
-        String data = "{\"taskTyp4e\":\"2\",\"contet\":[{\"doc\":\"正文1\"},{\"doc\":\"正文2\"},{\"doc\":\"正文3\"}],\"taskId\":\"hotwordner_test1000_0001b6facf9d48ceb0f0d97b94d00a04\",\"topN\":\"100\"}";
-        params.put("taskData", data);
-		String doPost = doPost(hotWordsURL, params);
-        System.out.println(doPost);
-//        String doGet = doGet(hotWordsURL);
-//        System.out.println(doGet);
+        String data = "{\"taskType\":\"2\",\"content\":[{\"doc\":\"正文1\"},{\"doc\":\"正文2\"},{\"doc\":\"正文3\"}],\"taskId\":\"hotwordner_test1000_0001b6facf9d48ceb0f0d97b94d00a04\",\"topN\":\"100\"}";
+        JSONObject jsonObject = JSONObject.parseObject(data);
+//        System.out.println(jsonObject);
+//        JSONArray jsonArray = jsonObject.getJSONArray("content");
+//        System.out.println(jsonArray);
+//        System.out.println(jsonArray.subList(0,2));
+//        jsonObject.put("content", jsonArray.subList(0,2));
+//        System.out.println(jsonObject.getJSONArray("content"));
+
+        int fileNum = 10; // 文件个数
+        Long rs = 0L;
+        for (int i = 0; i < fileNum; i++) {
+            Thread.sleep(3000);
+            jsonObject.put("taskId", "hotwordner_test_" + UUIDGenerator.getUUID());
+            params.put("taskData", jsonObject.toJSONString());
+
+
+            Long start = System.currentTimeMillis();
+            String doPost = doPost(hotWordsURL, params);
+            Long end = System.currentTimeMillis();
+            rs += (end - start);
+            System.out.println(i + " " + doPost);
+        }
+        System.out.println(rs);
+        System.out.println(rs / fileNum);
+
+        String doGet = doGet(testURL);
+        System.out.println(doGet);
     }
 }

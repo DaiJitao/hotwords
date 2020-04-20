@@ -20,13 +20,12 @@ public class PerformanceTest {
             FileUtil.deleteFile(file);
         }
 
-
-        int pSize = 10; // 并发量，线程数
-        int dataSize = 1000;
+        int pSize = 100; // 并发量，线程数,文件数
+        int dataSize = 1000; // 每个文件的数据量
         for (int i = 0; i < pSize; i++) {
             genFile(dataSize);
         }
-        Thread.sleep(1);
+        Thread.sleep(500);
 
         File[] files = FileUtil.listFilesByDir(dstPath);
         List<Thread> taskList = new ArrayList<>(files.length);

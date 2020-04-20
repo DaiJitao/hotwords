@@ -118,12 +118,20 @@ public class HdfsClientUtil {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+
         HdfsClientUtil util = HdfsClientUtil.getInstance();
         util.listDirectoryFromHdfs("/hotwordNer/taskDir");
-        String srcFile = "/hotwordNer/taskDir/" + "hotwordner_test1_f7ea8b_20200306175137_20200306175137.txt";
-        String dstDir = "F:\\data";
-        util.downloadFile(srcFile, dstDir);
+        // util.deleteFile()
+        String srcFile = "G:\\新华网项目\\实体词热词\\寻找最好批次\\hotwordner_0660486d0dd04325aed8926d4f1d4cd9_20200415164106.txt";
+
+        for (int i = 0; i < 1000; i++) {
+            Thread.sleep(10000);
+            String name = "test_" + UUIDGenerator.getUUID() + ".txt";
+            util.uploadToMonitor(srcFile, name);
+            System.out.println(name + "已上传\n");
+        }
+
     }
 
 
