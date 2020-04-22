@@ -1,6 +1,8 @@
 package hot.words.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.summary.TextRankKeyword;
 import hot.words.utils.HanlpUtil;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaDoubleRDD;
@@ -19,11 +21,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
-public class Demo extends KeyWordsExtractor {
-    public static void main(String[] args) {
-        checkPointOP();
+
+class Test implements Callable<String>{
+    @Override
+    public String call() throws Exception {
+        Thread.sleep(3000);
+        return null;
     }
+}
+public class Demo extends KeyWordsExtractor {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        //checkPointOP();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("dai", "ji");
+        System.out.println(jsonObject.remove("eee"));
+        System.out.println(jsonObject.remove("dai"));
+
+        Test test = new Test();
+        FutureTask<String> future = new FutureTask<String>(test);
+        Thread thread = new Thread(future);
+        thread.start();
+        // 线程执行完毕！
+        boolean isDone = false;
+        while (!isDone) {
+            isDone = future.isDone();
+        }
+        System.out.println(future.get()==null);
+
+
+
+    }
+
+
 
 
     static void checkPointOP() {

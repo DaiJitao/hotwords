@@ -14,7 +14,10 @@ import java.util.regex.Pattern;
 
 
 public class TextCleaner implements Serializable {
-    public static List<String> stopWords = loadStopWords();
+    public static List<String> stopWords ;
+    static {
+        stopWords = loadStopWords();
+    }
 
     private static List<String> loadStopWords() {
         String file = Config.getValue("stopwords");

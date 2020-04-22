@@ -394,7 +394,6 @@ public class HttpUtil {
             jsonObject.put("taskId", "hotwordner_test_" + UUIDGenerator.getUUID());
             params.put("taskData", jsonObject.toJSONString());
 
-
             Long start = System.currentTimeMillis();
             String doPost = doPost(hotWordsURL, params);
             Long end = System.currentTimeMillis();

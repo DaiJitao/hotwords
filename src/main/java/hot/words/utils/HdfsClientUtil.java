@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * hadoop文件系统操作
@@ -24,7 +26,7 @@ public class HdfsClientUtil {
     private final static Logger logger = LoggerFactory.getLogger(HdfsClientUtil.class);
     private static HdfsClientUtil instance = new HdfsClientUtil();
     private static Configuration conf = new Configuration();
-    private static FileSystem fs;
+    public static FileSystem fs;
 
     static {
         //添加配置
@@ -118,14 +120,32 @@ public class HdfsClientUtil {
         }
     }
 
+    //删除文件
+    public boolean deleteFile(Path file) throws IOException {
+        boolean isExist = fs.exists(file);
+        if (isExist) {
+            // boolean isDelete = fileSystem.deleteOnExit(filePath);
+            boolean isDelete = fs.delete(file, true);
+            return isDelete;
+        } else {
+            // 文件已不存在
+            return true;
+        }
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
 
         HdfsClientUtil util = HdfsClientUtil.getInstance();
-        util.listDirectoryFromHdfs("/hotwordNer/taskDir");
+//        List<Path> paths = util.listDirectoryFromHdfs("/hotwordNer/taskDir");
+//        for (Path file : paths) {
+//            if (file.toString().contains("20200416"))
+//                util.deleteFile(file);
+//
+//        }
         // util.deleteFile()
-        String srcFile = "G:\\新华网项目\\实体词热词\\寻找最好批次\\hotwordner_0660486d0dd04325aed8926d4f1d4cd9_20200415164106.txt";
+        String srcFile = "G:\\新华网项目\\实体词热词\\寻找最好批次\\6.txt";
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10; i++) {
             Thread.sleep(10000);
             String name = "test_" + UUIDGenerator.getUUID() + ".txt";
             util.uploadToMonitor(srcFile, name);
@@ -175,18 +195,23 @@ public class HdfsClientUtil {
     /**
      * 遍历指定目录(direPath)下的所有文件
      */
-    public void listDirectoryFromHdfs(String direPath) {
+    public List<Path> listDirectoryFromHdfs(String direPath) {
+        List<Path> list = new ArrayList<>(100);
         try {
             FileStatus[] filelist = fs.listStatus(new Path(direPath));
+
             for (int i = 0; i < filelist.length; i++) {
 
                 FileStatus fileStatus = filelist[i];
-                System.out.println(fileStatus.getPath().getName());
+                // System.out.println(fileStatus.getPath().getName());
+                // System.out.println(fileStatus.getPath());
+                list.add(fileStatus.getPath());
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return list;
     }
 
     /**
@@ -217,7 +242,7 @@ public class HdfsClientUtil {
      * @Author: Mr.Young
      * @Date: 2018-10-22
      */
-    public boolean uploadToMonitor(String localFile, String fileName)  {
+    public boolean uploadToMonitor(String localFile, String fileName) {
         String dfsTempDir = Config.getValue("tempDir") + fileName;
         String dfsTaskDir = Config.getValue("taskDir") + fileName;
         boolean isOK = false;

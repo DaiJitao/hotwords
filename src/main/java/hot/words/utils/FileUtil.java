@@ -87,6 +87,50 @@ public class FileUtil {
         }
     }
 
+
+    /**
+     * 按照行读取文件:加载json格式数据
+     *
+     * @param strFile
+     * @return
+     */
+    public static List<String> loadJSONData(String strFile) throws Exception {
+        File file = new File(strFile);
+        FileInputStream fileInputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        List<String> strings = new ArrayList<>(100);
+        try {
+            String charSet = "UTF-8";
+            fileInputStream = new FileInputStream(file);
+            inputStreamReader = new InputStreamReader(fileInputStream, charSet);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                strings.add(line.trim());
+                line = bufferedReader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("没有找到" + file);
+        } catch (UnsupportedEncodingException e) {
+            throw new FileNotFoundException("不支持编码" + file);
+        } catch (Exception e) {
+            throw new Exception(e);
+        } finally {
+            try {
+                if (bufferedReader != null)
+                    bufferedReader.close();
+                if (null != inputStreamReader)
+                    inputStreamReader.close();
+                if (null != fileInputStream)
+                    fileInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return strings;
+    }
+
     /**
      * 按照行读取文件
      *

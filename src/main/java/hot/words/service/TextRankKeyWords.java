@@ -33,13 +33,13 @@ public class TextRankKeyWords extends KeyWordsExtractor {
             termList.addAll(term);
         }
 
-        // 获取停用词词表
-        List<String> stopwordsList = TextCleaner.stopWords;
-        Broadcast<List<String>> stopwordsBroadcast = sc.broadcast(stopwordsList); // 停用词词表作为广播变量
+       // 停用词词表作为广播变量
+        Broadcast<List<String>> stopwordsBroadcast = sc.broadcast(TextCleaner.stopWords);
 
         JavaRDD<Term> termJavaRDD = sc.parallelize(termList);
         // 去除停用词
         JavaRDD<Term> removedwordsRDD = termJavaRDD.filter(new Function<Term, Boolean>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public Boolean call(Term term) throws Exception {
                 List<String> stopWords = stopwordsBroadcast.getValue();
@@ -50,6 +50,8 @@ public class TextRankKeyWords extends KeyWordsExtractor {
             }
         });
         removedwordsRDD.persist(StorageLevel.MEMORY_AND_DISK());
+
+
         List<Term> removedwordsList = removedwordsRDD.collect();
         TextRankKeyword textRankKeyword = new TextRankKeyword();
         // 计算textRank

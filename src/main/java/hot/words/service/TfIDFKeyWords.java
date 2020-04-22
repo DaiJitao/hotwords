@@ -28,8 +28,10 @@ import java.util.*;
 public class TfIDFKeyWords extends KeyWordsExtractor {
 
     public Map<String, Float> getKeyWords(SparkSession spark, Broadcast<Integer> sizeBrodcast, JavaRDD<String> docsRDD) {
+
         // 分词
         JavaRDD<String> cutWordsRDD = docsRDD.map(new Function<String, String>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public String call(String doc) throws Exception {
                 // String docCleaned = TextCleaner.cleanSpecialCharactersText(doc);
@@ -46,6 +48,7 @@ public class TfIDFKeyWords extends KeyWordsExtractor {
                 }
         );
         JavaRDD<Row> cutWordsRowJavaRDD = cutWordsRDD.map(new Function<String, Row>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public Row call(String doc) throws Exception {
                 return RowFactory.create(doc);
@@ -94,6 +97,7 @@ public class TfIDFKeyWords extends KeyWordsExtractor {
          *  id转换为单词
          */
         PairFunction<Row, String, String> keyData = new PairFunction<Row, String, String>() {
+            private static final long serialVersionUID = 1L;
             public Tuple2<String, String> call(Row row) throws Exception {
                 // (99,[97,98],[0.6931471805599453,0.6931471805599453])
                 String tmp = row.toString();
@@ -112,6 +116,7 @@ public class TfIDFKeyWords extends KeyWordsExtractor {
         String[] vocabulary = cvModel.vocabulary();
 
         JavaPairRDD<String, String> words_weights = ids_weightsRDD.flatMapToPair(new PairFlatMapFunction<Tuple2<String, String>, String, String>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public Iterator<Tuple2<String, String>> call(Tuple2<String, String> tuple2) throws Exception {
                 String[] s1 = tuple2._1.split(","); // 单词id

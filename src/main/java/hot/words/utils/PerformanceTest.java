@@ -21,9 +21,9 @@ public class PerformanceTest {
         }
 
         int pSize = 100; // 并发量，线程数,文件数
-        int dataSize = 1000; // 每个文件的数据量
+        int dataSize = 1000; // 每个文件的数据量:条数
         for (int i = 0; i < pSize; i++) {
-            genFile(dataSize);
+            genFile(dataSize, pSize);
         }
         Thread.sleep(500);
 
@@ -45,16 +45,17 @@ public class PerformanceTest {
 
     /**
      * @param size 数据条数
+     * @param threadNum 线程数
      * @throws Exception
      */
-    private static void genFile(int size) throws Exception {
+    private static void genFile(int size, int threadNum) throws Exception {
         String path = "F:\\data\\hotwordner_test2_f7ea8b_20200306175137_20200306175137.txt";
 
 
         String dstPath = "F:\\data\\hotwordner\\";
         String data = FileUtil.loadData(path).trim();
         JSONObject jsonObject = JSONObject.parseObject(data);
-        String taskId = "hotwordner_test" + size + "_" + UUIDGenerator.getUUID();
+        String taskId = "hotwordner_test_" + threadNum + "_" + size + "_" + UUIDGenerator.getUUID();
         String file = dstPath + taskId + ".txt";
         List<String> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
