@@ -143,11 +143,10 @@ public class HdfsClientUtil {
 //
 //        }
         // util.deleteFile()
-        String srcFile = "G:\\新华网项目\\实体词热词\\寻找最好批次\\6.txt";
+        String name = "hotworddjt_201804_201903_c4c1c673bde44875aedf185c6af9227e.txt";
+        String srcFile = "F:\\data\\tempTask\\year\\" + name;
 
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(10000);
-            String name = "test_" + UUIDGenerator.getUUID() + ".txt";
+        for (int i = 0; i < 1; i++) {
             util.uploadToMonitor(srcFile, name);
             System.out.println(name + "已上传\n");
         }

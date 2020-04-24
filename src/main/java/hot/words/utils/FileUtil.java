@@ -13,6 +13,12 @@ import java.util.List;
 public class FileUtil {
 
 
+    /**
+     * 从JSONString 里面获取数据
+     * @param filePath
+     * @return
+     * @throws Exception
+     */
     public static List<String> loadDataFromJSON(String filePath) throws Exception {
         File file = new File(filePath);
         FileInputStream fileInputStream = null;

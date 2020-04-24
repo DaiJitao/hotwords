@@ -20,27 +20,27 @@ public class PerformanceTest {
             FileUtil.deleteFile(file);
         }
 
-        int pSize = 100; // 并发量，线程数,文件数
-        int dataSize = 1000; // 每个文件的数据量:条数
-        for (int i = 0; i < pSize; i++) {
-            genFile(dataSize, pSize);
-        }
-        Thread.sleep(500);
+//        int pSize = 100; // 并发量，线程数,文件数
+//        int dataSize = 1000; // 每个文件的数据量:条数
+//        for (int i = 0; i < pSize; i++) {
+//            genFile(dataSize, pSize);
+//        }
+//        Thread.sleep(500);
 
-        File[] files = FileUtil.listFilesByDir(dstPath);
-        List<Thread> taskList = new ArrayList<>(files.length);
-        for (File file : files) {
-            int s = file.toString().lastIndexOf("\\");
-            int e = file.toString().indexOf(".");
-            String taskId = file.toString().substring(s + 1, e);
-
-            Runnable task = new SendTask(file.toString(), taskId);
-            Thread thread = new Thread(task);
-            taskList.add(thread);
-        }
-        for (Thread task : taskList) {
-            task.start();
-        }
+//        File[] files = FileUtil.listFilesByDir(dstPath);
+//        List<Thread> taskList = new ArrayList<>(files.length);
+//        for (File file : files) {
+//            int s = file.toString().lastIndexOf("\\");
+//            int e = file.toString().indexOf(".");
+//            String taskId = file.toString().substring(s + 1, e);
+//
+//            Runnable task = new SendTask(file.toString(), taskId);
+//            Thread thread = new Thread(task);
+//            taskList.add(thread);
+//        }
+//        for (Thread task : taskList) {
+//            task.start();
+//        }
     }
 
     /**
@@ -55,12 +55,12 @@ public class PerformanceTest {
         String dstPath = "F:\\data\\hotwordner\\";
         String data = FileUtil.loadData(path).trim();
         JSONObject jsonObject = JSONObject.parseObject(data);
-        String taskId = "hotwordner_test_" + threadNum + "_" + size + "_" + UUIDGenerator.getUUID();
+        String taskId = "hotworddjt_test_" + threadNum + "_" + size + "_" + UUIDGenerator.getUUID();
         String file = dstPath + taskId + ".txt";
         List<String> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             String assetId = UUIDGenerator.getUUID() + i;
-            jsonObject.put("assetId", assetId);
+            jsonObject.put("assetId", assetId); // 产生资产ID
             jsonObject.put("taskId", taskId);
             jsonObject.put("taskType", "2");
             list.add(jsonObject.toJSONString());
