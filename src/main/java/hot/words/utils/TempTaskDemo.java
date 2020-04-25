@@ -17,16 +17,21 @@ public class TempTaskDemo {
         //String toDir = args[1];
 
         // String dstPath = srcDir ; // "F:\\data\\tempTask\\hotword\\"; // 数据目录
-        String dstPath = "F:\\data\\tempTask\\hotword\\";
-        File[] files = FileUtil.listFilesByDir(dstPath);
-        String taskId = "hotworddjt_201804_201903_" + UUIDGenerator.getUUID();
-        String outFile = "F:\\data\\tempTask\\year\\" + taskId + ".txt";
+        String srcPath = "E:\\data\\tempTask\\hotword\\data\\";
+        File[] files = FileUtil.listFilesByDir(srcPath);
+
         // String outFile = toDir + "/" + taskId + ".txt";
+        int count = 1;
         for (File file : files) {
+            String taskId = "hotworddjt2_"+ count + "_201804_201903_" + UUIDGenerator.getUUID();
+            String outFile = "E:\\data\\tempTask\\hotword\\out_1month\\" + taskId + ".txt";
+            System.out.println("文件 taskId="+taskId);
             genFile(taskId, file.toString(), outFile);
-            break;
+
+            System.out.println("输出文件：" + outFile);
+            count++;
         }
-        System.out.println("写出文件：" + outFile);
+
     }
 
 
@@ -52,7 +57,7 @@ public class TempTaskDemo {
             resultObject.put("content", cotent);
             list.add(resultObject.toJSONString());
         }
-        FileUtil.save2Txt(outFile, String.join("\n", list), true);
+        FileUtil.save2Txt(outFile, String.join("\n", list));
     }
 }
 
